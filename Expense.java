@@ -10,7 +10,23 @@ public class Expense {
     private LocalDateTime updatedAt;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
+    public static void resetLastId() {
+        lastId = 0;
+    }
+
+    public Expense(int id, String description, double amount, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.description = description;
+        this.amount = amount;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        if (id > lastId) {
+            lastId = id;
+        }
+    }
+
     public Expense(String description, double amount, LocalDateTime createdAt, LocalDateTime updatedAt) {
+
         this.id = ++lastId;
         this.description = description;
         this.amount = amount;

@@ -63,7 +63,6 @@ public class ExpenseTrackerCLI {
                     if (args[i].equals("--id")) {
                         if (i + 1 < args.length && args[i + 1] != null) {
                             manager.deleteExpense(Integer.parseInt(args[i + 1]));
-                            manager.loadExpense();
                             return;
                         } else {
                             System.out.println("you must add id of expense after flag \"--id\"");
@@ -74,12 +73,28 @@ public class ExpenseTrackerCLI {
                 System.out.println("you must add flage \"--id\" after commad delete");
                 return;
             case "update":
+                int updateId = -1;
                 String newDescription = "";
                 double newAmount = 0;
+                boolean newHasId = false;
                 boolean newHasDescription = false;
                 boolean newHasAmount = false;
                 for (int i = 1; i < args.length; i++) {
-                    if (args[i].equals("--description")) {
+                    if (args[i].equals("--id")) {
+                        if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
+                            try {
+                                updateId = Integer.parseInt(args[i + 1]);
+                                newHasId = true;
+                                i++;
+                            } catch (NumberFormatException e) {
+                                System.out.println("Error: ID must be a number!");
+                                return;
+                            }
+                        } else {
+                            System.out.println("Error, id do not empty! ");
+                            return;
+                        }
+                    } else if (args[i].equals("--description")) {
                         if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
                             newDescription = args[i + 1];
                             newHasDescription = true;
@@ -99,11 +114,11 @@ public class ExpenseTrackerCLI {
                         }
                     }
                 }
-                if (!newHasAmount || !newHasDescription) {
-                    System.out.println("Error, usage : ExpenseTrackerCLI <add> --description \" \" --amount \" \"");
+                if (!newHasId || !newHasAmount || !newHasDescription) {
+                    System.out.println("Error, usage : ExpenseTrackerCLI update --id <id> --description \" \" --amount \" \"");
                     return;
                 }
-                manager.updateExpense(Integer.parseInt(args[2]), newDescription, newAmount);
+                manager.updateExpense(updateId, newDescription, newAmount);
                 return;
             default:
                 System.out.print("Usage: java ExpenseTrackerCLI <command> [arguments]");

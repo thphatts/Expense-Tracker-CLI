@@ -33,16 +33,24 @@ public class ExpenseManager {
 
     public List<Expense> loadExpense() {
         expenses = new ArrayList<>();
+        Expense.resetLastId();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
             String line;
             while ((line = reader.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
                 String[] parts = line.split(",");
+                if (parts.length < 5) {
+                    continue;
+                }
+                int id = Integer.parseInt(parts[0].trim());
                 String description = parts[1].trim();
                 double amount = Double.parseDouble(parts[2].trim());
                 LocalDateTime createdAt = LocalDateTime.parse(parts[3].trim());
                 LocalDateTime updatedAt = LocalDateTime.parse(parts[4].trim());
 
-                expenses.add(new Expense(description, amount, createdAt, updatedAt));
+                expenses.add(new Expense(id, description, amount, createdAt, updatedAt));
             }
         } catch (IOException e) {
             System.out.println("Error load expense: " + e.getMessage());
